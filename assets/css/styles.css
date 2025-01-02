@@ -747,6 +747,10 @@ body.dark-theme{
   position: relative;
   margin-bottom: .75rem;
 }
+.projects__image img{
+  max-height: 30vh;
+}
+
 
 .projects__button{
   position: absolute;
