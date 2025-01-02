@@ -153,3 +153,66 @@ const sr = ScrollReveal({
 sr.reveal(`.home__perfil, .about__image, .contact__mail`, {origin: 'right'})
 sr.reveal(`.home__name, .home__info, .about__container, .section__title-1, .about__info, .contact__social, .contact__data`, {origin: 'left'})
 sr.reveal(`.services__card, .projects__card`, {interval: 100})
+
+
+
+
+
+
+// Blogs
+
+const sanitizeHTML = (html) => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, "text/html");
+  return doc.body.textContent || "";
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+  const blogContainer = document.getElementById("blog-container");
+
+  fetch("https://api.rss2json.com/v1/api.json?rss_url=https://medium.com/feed/@rajan-poudel")
+      .then(response => response.json())
+      .then(data => {
+        const latestArticles = data.items.slice(0, 6);
+        latestArticles.forEach(article => {
+              const blogCard = document.createElement("article");
+              blogCard.classList.add("projects__card");
+              
+              const sanitizedDescription = sanitizeHTML(article.description);
+
+              blogCard.innerHTML = `
+
+              <article class="projects__card">
+                  <div class="projects__image">
+                     <img src="${article.description.match(/<img[^>]+src="([^">]+)"/)[1]}" class="projects__img">
+
+                     <a href="${article.link}" class="projects__button button">
+                        <i class="ri-arrow-right-up-line"></i>
+                     </a>
+                  </div>
+
+                  <div class="projects__content">
+                     <span class="projects__subtitle"> ${new Date(article.pubDate).toLocaleDateString()}</span>
+                     <h2 class="projects__title">${article.title.substring(0, 50)}...</h2>
+
+                     <p class="projects__description">
+                     ${sanitizedDescription.substring(0, 100)}...
+                     </p>
+                  </div>
+
+                  <div class="projects__buttons">
+                        <i class="ri-user-3-line"></i>${article.author}
+                     </a>
+
+                     <a href="https://medium.com/@rajan-poudel" target="_blank" class="projects__link">
+                        <i class="ri-dribbble-line"></i> All articles
+                     </a>
+                  </div>
+               </article>
+              `;
+
+              blogContainer.appendChild(blogCard);
+          });
+      })
+      .catch(error => console.error("Error fetching Medium blog posts:", error));
+});
