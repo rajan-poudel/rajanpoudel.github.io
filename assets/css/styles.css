@@ -749,6 +749,7 @@ body.dark-theme{
 }
 .projects__image img{
   max-height: 30vh;
+	width:100%;
 }
 
 
